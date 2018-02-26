@@ -51,7 +51,9 @@ class CheckoutTest extends TestCase
 
     /**
      * @test
-     * @review what is the desired behaviour when given an invalid ID? throw an exception, or recover and continue by ignoring the invalid ID?
+     * @review what is the desired behaviour when given an invalid ID? throw an
+     * exception, or recover and continue by ignoring the invalid ID? My feeling
+     * is that if we accept "" (empty string) returns zero, to go with the latter.
      */
     public function it_guards_against_invalid_products()
     {
@@ -84,10 +86,15 @@ class CheckoutTest extends TestCase
         ];
 
         $checkout = new Checkout($products, $special_offers);
-
         $this->assertEquals(1000, $checkout->getTotal('CC'));
+
+        $checkout = new Checkout($products, $special_offers);
         $this->assertEquals(1600, $checkout->getTotal('ACAC'));
+
+        $checkout = new Checkout($products, $special_offers);
         $this->assertEquals(2000, $checkout->getTotal('CCCC'));
+
+        $checkout = new Checkout($products, $special_offers);
         $this->assertEquals(1700, $checkout->getTotal('CCC'));
     }
 }
