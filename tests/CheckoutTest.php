@@ -8,7 +8,7 @@ class CheckoutTest extends TestCase
     /**
      * @test
      */
-    public function it_return_0_for_empty_string()
+    public function it_returns_0_for_empty_string()
     {
         $checkout = new Checkout(array(), array());
 
@@ -51,6 +51,7 @@ class CheckoutTest extends TestCase
 
     /**
      * @test
+     * @review what is the desired behaviour when given an invalid ID? throw an exception, or recover and continue by ignoring the invalid ID?
      */
     public function it_guards_against_invalid_products()
     {
@@ -70,7 +71,7 @@ class CheckoutTest extends TestCase
     /**
      * @test
      */
-    public function it_allows_special_offer_prices()
+    public function it_applies_discount_for_special_offer_prices()
     {
         $products = [
             'A' => 300,
@@ -86,5 +87,7 @@ class CheckoutTest extends TestCase
 
         $this->assertEquals(1000, $checkout->getTotal('CC'));
         $this->assertEquals(1600, $checkout->getTotal('ACAC'));
+        $this->assertEquals(2000, $checkout->getTotal('CCCC'));
+        $this->assertEquals(1700, $checkout->getTotal('CCC'));
     }
 }
