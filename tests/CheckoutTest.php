@@ -41,7 +41,7 @@ class CheckoutTest extends TestCase
     {
         $checkout = $this->getTestSubject();
 
-        $this->assertEquals($products['A'], $checkout->getTotal("A"));
+        $this->assertEquals(300, $checkout->getTotal("A"));
     }
 
     /**
