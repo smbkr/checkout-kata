@@ -38,4 +38,24 @@ class CatalogueTest extends TestCase
             ['A', 4, 140]
         ];
     }
+
+    /**
+     * @test
+     */
+    public function it_returns_true_if_item_is_in_catalogue()
+    {
+        $catalogue = new Catalogue(['A' => 100]);
+
+        $this->assertTrue($catalogue->isAvailable('A'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_false_if_item_is_not_in_catalogue()
+    {
+        $catalogue = new Catalogue(['A' => 100]);
+
+        $this->assertFalse($catalogue->isAvailable('B'));
+    }
 }

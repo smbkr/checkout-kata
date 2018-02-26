@@ -17,17 +17,32 @@ class Catalogue
      */
     protected $special_offers;
 
+    /**
+     * @param array $products
+     * @param array $special_offers
+     */
     public function __construct($products, $special_offers = [])
     {
         $this->products = $products;
         $this->special_offers = $special_offers;
     }
 
+    /**
+     * Determines if a product is on offer.
+     * @param string $product_code
+     * @return bool
+     */
     protected function onOffer($product_code)
     {
         return in_array($product_code, array_keys($this->special_offers));
     }
 
+    /**
+     * Get total price for n number of a product.
+     * @param string $product_code
+     * @param int $quantity
+     * @return int
+     */
     public function getPriceFor($product_code, $quantity = 1)
     {
         if ($quantity === 1 ||
@@ -50,5 +65,15 @@ class Catalogue
         }
 
         return $total;
+    }
+
+    /**
+     * Determine if a product is in the catalogue.
+     * @param string $product_code
+     * @return bool
+     */
+    public function isAvailable($product_code)
+    {
+        return in_array($product_code, array_keys($this->products));
     }
 }
