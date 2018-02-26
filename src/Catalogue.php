@@ -61,10 +61,7 @@ class Catalogue
             }
         }
 
-        while ($quantity > 0) {
-            $total += $this->products[$product_code];
-            $quantity --;
-        }
+        $total += $this->products[$product_code] * $quantity;
 
         return $total;
     }
