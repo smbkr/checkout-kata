@@ -43,4 +43,23 @@ class CatalogueCheckoutTest extends TestCase
         // Then we should receive the discounted price
         $this->assertEquals(350, $result);
     }
+
+    /**
+     * @test
+     */
+    public function it_doesnt_apply_discounts_when_qty_is_not_met()
+    {
+        // Given an item in the catalogue is on offer
+        $catalogue = new Catalogue(
+            ['A' => 100, 'B' => 50, 'C' => 70],
+            ['C' => ['qty' => 10, 'price' => 20]]
+        );
+
+        // When we add too few of that item to the checkout to qualify
+        $checkout = new Checkout($catalogue);
+        $result = $checkout->getTotal('ABCABC');
+
+        // Then we should be charged full price
+        $this->assertEquals(440, $result);
+    }
 }
