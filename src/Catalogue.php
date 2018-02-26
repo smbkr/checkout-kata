@@ -49,9 +49,13 @@ class Catalogue
     {
         $total = 0;
 
+        // If the product is on offer
         if ($this->onOffer($product_code)) {
+            // And we meet the min quantity required
             $offer_qty_required = $this->special_offers[$product_code]['qty'];
             while ($quantity >= $offer_qty_required) {
+                // Add the special price to the total, and subtract the
+                // qualifying items
                 $total += $this->special_offers[$product_code]['price'];
                 $quantity -= $offer_qty_required;
             }
