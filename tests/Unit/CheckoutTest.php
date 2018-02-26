@@ -2,37 +2,54 @@
 
 use PHPUnit\Framework\TestCase;
 use Smbkr\Checkout;
+use Smbkr\Catalogue;
 
 class CheckoutTest extends TestCase
 {
     /**
+     * Tests that Checkout can fail gracefully if given an empty order.
      * @test
      */
     public function it_returns_0_for_empty_string()
     {
-        $checkout = $this->getTestSubject();
+        $catalogueMock = $this->createMock(Catalogue::class);
+        $checkout = new Checkout($catalogueMock);
 
         $this->assertEquals(0, $checkout->getTotal(""));
     }
 
     /**
+     * Tests that Checkout is calling hte getPriceFor method on Catalogue to
+     * determine a product's cost.
      * @test
      */
     public function it_returns_the_value_for_a_product_code()
     {
-        $checkout = $this->getTestSubject();
+        $catalogueMock = $this->createMock(Catalogue::class);
+        $catalogueMock->method('isAvailable')
+            ->willReturn(true);
+        $catalogueMock->method('getPriceFor')
+            ->willReturn(300);
+        $checkout = new Checkout($catalogueMock);
 
         $this->assertEquals(300, $checkout->getTotal("A"));
     }
 
     /**
+     * Test that Checkout will loop over each product type, calling getPriceFor
+     * on Catalogue for each product.
      * @test
      */
     public function it_sums_the_price_for_multiple_products()
     {
-        $checkout = $this->getTestSubject();
+        $catalogueMock = $this->createMock(Catalogue::class);
+        $catalogueMock->method('isAvailable')
+            ->willReturn(true);
+        $catalogueMock->method('getPriceFor')
+            ->will($this->onConsecutiveCalls(100, 200, 300, 400));
+        $checkout = new Checkout($catalogueMock);
 
-        $this->assertEquals(2500, $checkout->getTotal("ABCD"));
+        $this->assertEquals(1000, $checkout->getTotal("ABCD"));
     }
 
     /**
@@ -43,34 +60,11 @@ class CheckoutTest extends TestCase
      */
     public function it_guards_against_invalid_products()
     {
-        $checkout = $this->getTestSubject();
+        $catalogueMock = $this->createMock(Catalogue::class);
+        $catalogueMock->method('isAvailable')
+            ->willReturn(false);
+        $checkout = new Checkout($catalogueMock);
 
         $this->assertEquals(0, $checkout->getTotal('Z'));
-        $this->assertEquals(300, $checkout->getTotal('AZ'));
-    }
-
-    /**
-     * @test
-     * @dataProvider offersProvider
-     */
-    public function it_applies_discount_for_special_offer_prices($order, $expected_total)
-    {
-        $checkout = $this->getTestSubject();
-
-        $this->assertEquals($expected_total, $checkout->getTotal($order));
-    }
-
-    /**
-     * Provide test data and expectations for ::it_applies_discount_for_special_offer_prices
-     * @return array
-     */
-    public function offersProvider()
-    {
-        return [
-            ['CC', 1000],
-            ['ACAC', 1600],
-            ['CCCC', 2000],
-            ['CCC', 1700]
-        ];
     }
 }

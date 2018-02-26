@@ -102,21 +102,4 @@ class Checkout
             }
         }
     }
-
-    /**
-     * Guard against invalid product IDs.
-     * @review could be refactored to throw an exception (InvalidProductException)
-     * instead of being a boolean check.
-     * @param string $value
-     * @return bool
-     */
-    protected function guardValues($value)
-    {
-        if (in_array($value, array_keys($this->products)))
-        {
-            return true;
-        }
-
-        return false;
-    }
 }
