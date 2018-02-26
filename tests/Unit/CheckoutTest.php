@@ -6,25 +6,6 @@ use Smbkr\Checkout;
 class CheckoutTest extends TestCase
 {
     /**
-     * Get an instance of Checkout for testing.
-     * @return Checkout
-     */
-    private function getTestSubject()
-    {
-        $products = [
-            'A' => 300,
-            'B' => 500,
-            'C' => 700,
-            'D' => 1000
-        ];
-        $special_offers = [
-            'C' => [2, 1000]
-        ];
-
-        return new Checkout($products, $special_offers);
-    }
-
-    /**
      * @test
      */
     public function it_returns_0_for_empty_string()

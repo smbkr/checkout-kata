@@ -19,7 +19,9 @@ class Catalogue
 
     /**
      * @param array $products
-     * @param array $special_offers
+     * @param array $special_offers Ideally this would be an array of Offer
+     * objects implementing an interface with getQtyRequired() and getDiscountedPrice()
+     * methods or similar.
      */
     public function __construct($products, $special_offers = [])
     {

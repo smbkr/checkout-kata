@@ -5,17 +5,10 @@ namespace Smbkr;
 class Checkout
 {
     /**
-     * Map of product IDs => prices
-     * @var array
+     * Holds the catalogue of prices and offers.
+     * @var Catalogue
      */
-    protected $products;
-
-    /**
-     * Map of special offers.
-     * Structure is string ID => [int num required, int special price]
-     * @var array
-     */
-    protected $special_offers;
+    protected $catalogue;
 
     /**
      * Holds items to be purchased.
@@ -28,10 +21,9 @@ class Checkout
      * @param array $products
      * @param array $special_offers
      */
-    public function __construct($products = [], $special_offers = [])
+    public function __construct($catalogue)
     {
-        $this->products = $products;
-        $this->special_offers = $special_offers;
+        $this->catalogue = $catalogue;
     }
 
     /**
@@ -46,7 +38,7 @@ class Checkout
         $total = 0;
         foreach ($this->basket as $product => $quantity)
         {
-            $total += $this->getSubtotalForProduct($product, $quantity);
+            $total += $this->catalogue->getPriceFor($product, $quantity);
         }
 
         return $total;
@@ -96,7 +88,7 @@ class Checkout
         // that items are grouped by product ID.
         foreach (str_split($product_ids) as $product)
         {
-            if (!$this->guardValues($product)) {
+            if (!$this->catalogue->isAvailable($product)) {
                 continue;
             }
 
