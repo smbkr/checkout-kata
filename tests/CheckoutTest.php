@@ -6,11 +6,30 @@ use Smbkr\Checkout;
 class CheckoutTest extends TestCase
 {
     /**
+     * Get an instance of Checkout for testing.
+     * @return Checkout
+     */
+    private function getTestSubject()
+    {
+        $products = [
+            'A' => 300,
+            'B' => 500,
+            'C' => 700,
+            'D' => 1000
+        ];
+        $special_offers = [
+            'C' => [2, 1000]
+        ];
+
+        return new Checkout($products, $special_offers);
+    }
+
+    /**
      * @test
      */
     public function it_returns_0_for_empty_string()
     {
-        $checkout = new Checkout(array(), array());
+        $checkout = $this->getTestSubject();
 
         $this->assertEquals(0, $checkout->getTotal(""));
     }
@@ -20,14 +39,7 @@ class CheckoutTest extends TestCase
      */
     public function it_returns_the_value_for_a_product_code()
     {
-        $products = [
-            'A' => 300,
-            'B' => 500,
-            'C' => 700,
-            'D' => 1000
-        ];
-
-        $checkout = new Checkout($products);
+        $checkout = $this->getTestSubject();
 
         $this->assertEquals($products['A'], $checkout->getTotal("A"));
     }
@@ -37,14 +49,7 @@ class CheckoutTest extends TestCase
      */
     public function it_sums_the_price_for_multiple_products()
     {
-        $products = [
-            'A' => 300,
-            'B' => 500,
-            'C' => 700,
-            'D' => 1000
-        ];
-
-        $checkout = new Checkout($products);
+        $checkout = $this->getTestSubject();
 
         $this->assertEquals(2500, $checkout->getTotal("ABCD"));
     }
@@ -57,14 +62,7 @@ class CheckoutTest extends TestCase
      */
     public function it_guards_against_invalid_products()
     {
-        $products = [
-            'A' => 300,
-            'B' => 500,
-            'C' => 700,
-            'D' => 1000
-        ];
-
-        $checkout = new Checkout($products);
+        $checkout = $this->getTestSubject();
 
         $this->assertEquals(0, $checkout->getTotal('Z'));
         $this->assertEquals(300, $checkout->getTotal('AZ'));
@@ -72,29 +70,26 @@ class CheckoutTest extends TestCase
 
     /**
      * @test
+     * @dataProvider offersProvider
      */
-    public function it_applies_discount_for_special_offer_prices()
+    public function it_applies_discount_for_special_offer_prices($order, $expected_total)
     {
-        $products = [
-            'A' => 300,
-            'B' => 500,
-            'C' => 700,
-            'D' => 1000
+        $checkout = $this->getTestSubject();
+
+        $this->assertEquals($expected_total, $checkout->getTotal($order));
+    }
+
+    /**
+     * Provide test data and expectations for ::it_applies_discount_for_special_offer_prices
+     * @return array
+     */
+    public function offersProvider()
+    {
+        return [
+            ['CC', 1000],
+            ['ACAC', 1600],
+            ['CCCC', 2000],
+            ['CCC', 1700]
         ];
-        $special_offers = [
-            'C' => [2, 1000]
-        ];
-
-        $checkout = new Checkout($products, $special_offers);
-        $this->assertEquals(1000, $checkout->getTotal('CC'));
-
-        $checkout = new Checkout($products, $special_offers);
-        $this->assertEquals(1600, $checkout->getTotal('ACAC'));
-
-        $checkout = new Checkout($products, $special_offers);
-        $this->assertEquals(2000, $checkout->getTotal('CCCC'));
-
-        $checkout = new Checkout($products, $special_offers);
-        $this->assertEquals(1700, $checkout->getTotal('CCC'));
     }
 }
