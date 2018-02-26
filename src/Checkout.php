@@ -4,14 +4,34 @@ namespace Smbkr;
 
 class Checkout
 {
+    /**
+     * Map of product IDs => prices
+     * @var array
+     */
     protected $products;
 
+    /**
+     * Map of special offers.
+     * Structure is string ID => [int num required, int special price]
+     * @var array
+     */
+    protected $special_offers;
+
+    /**
+     * @param array $products
+     * @param array $special_offers
+     */
     public function __construct($products = [], $special_offers = [])
     {
         $this->products = $products;
         $this->special_offers = $special_offers;
     }
 
+    /**
+     * Get the total for a string of product IDs.
+     * @param string $product_ids
+     * @return int
+     */
     public function getTotal($product_ids)
     {
         $ids = str_split($product_ids);
@@ -50,6 +70,11 @@ class Checkout
         return $total;
     }
 
+    /**
+     * Guard against invalid product IDs.
+     * @param string $value
+     * @return bool
+     */
     protected function guardValues($value)
     {
         if (in_array($value, array_keys($this->products)))
