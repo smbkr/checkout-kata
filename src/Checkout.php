@@ -45,39 +45,6 @@ class Checkout
     }
 
     /**
-     * Get subtotal including discounts for a product at the given quantity.
-     * @param string $product
-     * @param int $quantity
-     * @return int
-     */
-    protected function getSubtotalForProduct($product_id, $quantity)
-    {
-        $subtotal = 0;
-        while ($quantity > 0)
-        {
-            // If there's a special offer available...
-            if (array_key_exists($product_id, $this->special_offers))
-            {
-                // And the quantity remaining qualifies for an offer
-                if (($quantity % $this->special_offers[$product_id][0]) === 0) {
-                    // Add the special price to the subtotal
-                    $subtotal += $this->special_offers[$product_id][1];
-                    // And remove the qualifying items from the basket
-                    $quantity -= $this->special_offers[$product_id][0];
-
-                    continue;
-                }
-            }
-
-            // Add the item's regular price to the subtotal, and subtract one
-            $subtotal += $this->products[$product_id];
-            $quantity -= 1;
-        }
-
-        return $subtotal;
-    }
-
-    /**
      * Split string of IDs into a basket of products.
      * @param string $product_ids
      * @return void
