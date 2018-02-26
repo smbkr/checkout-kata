@@ -45,22 +45,18 @@ class Catalogue
      */
     public function getPriceFor($product_code, $quantity = 1)
     {
-        if ($quantity === 1 ||
-            !$this->onOffer($product_code)
-        ) {
-            return $this->products[$product_code];
-        }
-
         $total = 0;
 
-        $offer_qty_required = $this->special_offers[$product_code]['qty'];
-        while ($quantity >= $offer_qty_required) {
-            $total += $this->special_offers[$product_code]['price'];
-            $quantity -= $offer_qty_required;
+        if ($this->onOffer($product_code)) {
+            $offer_qty_required = $this->special_offers[$product_code]['qty'];
+            while ($quantity >= $offer_qty_required) {
+                $total += $this->special_offers[$product_code]['price'];
+                $quantity -= $offer_qty_required;
+            }
         }
 
         while ($quantity > 0) {
-            $total += $this->getPriceFor($product_code);
+            $total += $this->products[$product_code];
             $quantity --;
         }
 

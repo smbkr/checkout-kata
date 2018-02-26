@@ -15,6 +15,13 @@ class CatalogueTest extends TestCase
         $this->assertEquals(100, $catalogue->getPriceFor('A', 1));
     }
 
+    public function it_returns_multiples_of_base_price_for_multiple_products()
+    {
+        $catalogue = new Catalogue(['A' => 100]);
+
+        $this->assertEquals(200, $catalogue->getPriceFor('A', 2));
+    }
+
     /**
      * @test
      * @dataProvider discountProvider
